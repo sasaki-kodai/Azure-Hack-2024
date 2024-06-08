@@ -6,7 +6,7 @@ pyenv+virtualenv+poetryで行っている
 
 macOS想定
 
-VS codeをインストールしておくこと
+VS codeをインストールしておく、ExtensionsでAzure Toolsを入れる
 
 
 1. ```pyenv```をgithubから```$HOME```配下に持ってくる
@@ -71,14 +71,17 @@ poetry install --no-root
 ```sh
 poetry add hogehoge
 ```
-13. jupyterの設定
+13. Azure CLIをインストール
+https://learn.microsoft.com/ja-jp/dotnet/azure/install-azure-cli
+
+### jupyterの設定
 
 上記の設定のままだとvirtualenvの環境をjupyter lab等で使えないので、jupyter labで仮想環境が使えるように設定する
 
 下記の手順はvirtualenvで仮想環境を作成する度に必要
 1. virtualenvの仮想環境にいる状態でipykernelをインストールする
 ```sh
-pip install ipykernel
+poetry add ipykernel
 ```
 2. jupyterに仮想環境のkernelを追加する
 ```sh
