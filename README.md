@@ -4,7 +4,7 @@
 ### pythonの設定
 pyenv+virtualenv+poetryで行っている
 
-macOS想定
+macOS想定(azure-search-documentsが入らなかったのでubuntuに移行)
 
 VS codeをインストールしておく、ExtensionsでAzure Toolsを入れる
 
@@ -53,7 +53,7 @@ source env/bin/activate
 ```
 9. poetryをインストール
 ```sh
-source pip install poetry
+pip install poetry
 ```
 
 ### プロジェクトの環境構築
@@ -71,7 +71,7 @@ poetry install --no-root
 ```sh
 poetry add hogehoge
 ```
-13. Azure CLIをインストール
+13. Azure CLIをインストール(ubuntuでは入れてない)
 https://learn.microsoft.com/ja-jp/dotnet/azure/install-azure-cli
 
 ### jupyterの設定
