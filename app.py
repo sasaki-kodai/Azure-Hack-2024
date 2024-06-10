@@ -48,6 +48,6 @@ def test():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=7778)
+    app.run(debug=True)
     # ローカル環境でpython ./src/app.pyを立ち上げて下記を投げると返ってくる
     # curl -X POST http://sj-dirac:7778/chat -H "Content-Type: application/json" -d '{"message": "こんにちは、元気ですか？"}'
