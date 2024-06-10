@@ -15,6 +15,7 @@ requests = "^2.32.3"
 python-dotenv = "^1.0.1"
 azure-search-documents = "^11.4.0"
 flask = "^3.0.3"
+langchain = "^0.2.3"
 
 
 [build-system]
