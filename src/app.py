@@ -18,6 +18,8 @@ client = AzureOpenAI(
 def chat():
     data = request.get_json()
 
+    print("Received request for chat data={}".format(data))
+
     if 'message' not in data:
         return jsonify({'error': 'Message is required'}), 400
     
