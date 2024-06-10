@@ -33,6 +33,15 @@ def chat():
 
     return chat_response
 
+
+@app.route('/test', methods=['GET'])
+def test():
+
+    print("Received request for test")
+
+    return "Hello World!"
+
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=7778)
     # ローカル環境でpython ./src/app.pyを立ち上げて下記を投げると返ってくる
