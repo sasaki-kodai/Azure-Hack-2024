@@ -3,6 +3,8 @@
 from flask import Flask, request, jsonify
 from openai import AzureOpenAI
 import os
+import logging
+from opencensus.ext.azure.log_exporter import AzureLogHandler
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -14,11 +16,15 @@ client = AzureOpenAI(
     api_version="2024-02-01"
 )
 
+logger = logging.getLogger(__name__)
+logger.addHandler(AzureLogHandler())
+
 @app.route('/chat', methods=['POST'])
 def chat():
+    logger.info("Received request")
     data = request.get_json()
 
-    print("Received request for chat data={}".format(data))
+    logger.info(f"Received {data}")
 
     if 'message' not in data:
         return jsonify({'error': 'Message is required'}), 400
@@ -36,8 +42,7 @@ def chat():
 
 @app.route('/test', methods=['GET'])
 def test():
-
-    print("Received request for test")
+    logger.info("Received request")
 
     return "Hello World!"
 
