@@ -5,7 +5,7 @@ from openai import AzureOpenAI
 import os
 from dotenv import load_dotenv
 load_dotenv()
-#from create_vecterindex import get_embedding, hybrid_search
+from vectersearch import  modify_query, hybrid_search
 
 app = Flask(__name__)
 
@@ -18,7 +18,7 @@ client = AzureOpenAI(
 systemprompt = """あなたは優秀な広告クリエイターです。
 Youtube広告で配信する15秒の動画広告を企画します。
 
-入力で与えられた条件や補足情報を基に企画を考えてください。
+入力で与えられた条件や補足情報を基に斬新な企画を考えてください。
 advertiser_name : 企業名
 promotion_name : 商品名
 promotion_details : 商品や企業の詳細
@@ -26,7 +26,7 @@ kpi : 広告配信する上で重視している指標
 
 出力は下記形式で出力してください。
 plan_name : あなたが考える企画を一言で教えてください。
-plan_details : その企画の詳細な情報を教えてください。
+plan_details : その企画の詳細な情報（内容やアピールポイントなど）を教えてください。また、検索結果を参考にした場合は参考にした情報を明記してください。
 characters_inad : その企画に登場する人物を教えてください。
 scene_description_1 : その企画を実際に動画にする場合、最初のシーンを教えてください。
 scene_description_2 ~ scene_description_6 : 2シーン目以降の詳細を教えてください。最大6シーン定義できますがそれより少ないシーン数でも構いません。
@@ -78,10 +78,14 @@ def chat():
         return jsonify({'error': 'Message is required'}), 400
     
     user_message = data['message']
+    query = modify_query(user_message)
+    search_result = hybrid_search(query).next()['content']
+    result = [{"role": "system", "content": '下記は検索結果です。\nもし過去に同じpromotion_nameの企画があればそれを参考にして考えてください。\n検索結果 :\n'+search_result}]
+
     response = client.chat.completions.create(model="gpt-4",
                                         messages=few_shot_messages + [
                                             {"role": "system", "content": systemprompt},
-                                            {"role": "user", "content": user_message}],
+                                            {"role": "user", "content": user_message}] + result,
                                         temperature=1.0,
                                         max_tokens=2048)
     chat_response = response.choices[0].message.content
@@ -91,4 +95,5 @@ def chat():
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=7778)
     # ローカル環境でpython ./src/app.pyを立ち上げて下記を投げると返ってくる
+    # curl -X POST http://sj-dirac:7778/chat -H "Content-Type: application/json" -d '{"message": "advertiser_name : 株式会社トライト promotion_name : 保育士ワーカー promotion_details : 「転職成功者1万人」をテーマに専門職種の転職サイトを手掛ける会社の保育士専門の転職サイト、「全ての保育士さんが満足、安心して働ける理想の職場を」がモットー。 kpi : サイト来訪"}'
     # curl -X POST http://sj-dirac:7778/chat -H "Content-Type: application/json" -d '{"message": "advertiser_name : Microsoft Corporation promotion_name : Azure promotion_details : クラウドコンピューティングプラットフォームおよびサービス、生成AIをOfficeとの連携することで業務効率化を目指している。 kpi : 認知度の向上"}'
