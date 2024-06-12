@@ -219,6 +219,21 @@ typing-extensions = ">=4.6.0"
 aio = ["aiohttp (>=3.0)"]
 
 [[package]]
+name = "azure-cosmos"
+version = "4.7.0"
+description = "Microsoft Azure Cosmos Client Library for Python"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "azure-cosmos-4.7.0.tar.gz", hash = "sha256:72d714033134656302a2e8957c4b93590673bd288b0ca60cb123e348ae99a241"},
+    {file = "azure_cosmos-4.7.0-py3-none-any.whl", hash = "sha256:03d8c7740ddc2906fb16e07b136acc0fe6a6a02656db46c5dd6f1b127b58cc96"},
+]
+
+[package.dependencies]
+azure-core = ">=1.25.1"
+typing-extensions = ">=4.6.0"
+
+[[package]]
 name = "azure-search-documents"
 version = "11.4.0"
 description = "Microsoft Azure Cognitive Search Client Library for Python"
@@ -2393,4 +2408,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "30e60eecc61b72a3224904ef4c05349aebdbfad70ab57e0af9f301a67829e363"
+content-hash = "2f2d719341a3b94694342664dc3d0b645fd29ee747a13044913e3bdc50ed794b"

@@ -6,8 +6,15 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 from vectersearch import  modify_query, hybrid_search
+import json
 
 app = Flask(__name__)
+
+dalle_client = AzureOpenAI(
+    api_version="2024-02-01",  
+    api_key=os.environ["AZURE_DALLE_API_KEY"],  
+    azure_endpoint=os.environ['AZURE_DALLE_ENDPOINT']
+)
 
 # chatのclientを作成
 client = AzureOpenAI(
@@ -92,8 +99,25 @@ def chat():
 
     return chat_response
 
+@app.route('/image', methods=['POST'])
+def image():
+    data = request.get_json()
+    if 'message' not in data:
+        return jsonify({'error': 'Message is required'}), 400
+    user_prompt = data['message']
+    result = dalle_client.images.generate(
+        model="dall-e-3",
+        prompt=user_prompt,
+        n=1
+    )   
+    json_response = json.loads(result.model_dump_json())
+    storage_uri = json_response["data"][0]["url"]
+
+    return storage_uri
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=7778)
     # ローカル環境でpython ./src/app.pyを立ち上げて下記を投げると返ってくる
     # curl -X POST http://sj-dirac:7778/chat -H "Content-Type: application/json" -d '{"message": "advertiser_name : 株式会社トライト promotion_name : 保育士ワーカー promotion_details : 「転職成功者1万人」をテーマに専門職種の転職サイトを手掛ける会社の保育士専門の転職サイト、「全ての保育士さんが満足、安心して働ける理想の職場を」がモットー。 kpi : サイト来訪"}'
     # curl -X POST http://sj-dirac:7778/chat -H "Content-Type: application/json" -d '{"message": "advertiser_name : Microsoft Corporation promotion_name : Azure promotion_details : クラウドコンピューティングプラットフォームおよびサービス、生成AIをOfficeとの連携することで業務効率化を目指している。 kpi : 認知度の向上"}'
+    # curl -X POST http://sj-dirac:7778/image -H "Content-Type: application/json" -d '{"message": "Young woman entering bathroom in the morning, looking sleepy"}'
