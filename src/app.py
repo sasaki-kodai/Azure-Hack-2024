@@ -22,28 +22,31 @@ client = AzureOpenAI(
     api_key=os.getenv("AZURE_OPENAI_API_KEY"),  
     api_version="2024-02-01"
 )
-systemprompt = """あなたは優秀な広告クリエイターです。
-Youtube広告で配信する15秒の動画広告を企画します。
+systemprompt = """#命令
+あなたは様々なヒット企画案を生み出す優秀な広告クリエイターです。
+Youtube広告で配信する15秒の動画広告の企画案を考えています。
+入力文と下記の制約条件をもとに、誰も思いつかないようなアイデアを出力してください。
 
-入力で与えられた条件や補足情報を基に斬新な企画を考えてください。
+#制約条件
+・出力文は、下記の出力文の形式に従ってください。
+・Azure AI Searchを利用して、他社の企画・自社の過去の企画・自社の違う製品の企画を参考に出来ます。
+・参考にした企画案とほとんど同じ内容の企画案は出力しないでください。
+・新しい具体的な情報が提供されておらず、更新されたデータや外部データに基づいて直接回答を生成することができなくても、提供された情報に基づいて仮想的な広告企画案を作成してください。
+
+#入力文の補足
 advertiser_name : 企業名
 promotion_name : 商品名
 promotion_details : 商品や企業の詳細
 kpi : 広告配信する上で重視している指標
 
-出力は下記形式で出力してください。
+#出力文の形式
 plan_name : あなたが考える企画を一言で教えてください。
-plan_details : その企画の詳細な情報（内容やアピールポイントなど）を教えてください。また、検索結果を参考にした場合は参考にした情報を明記してください。
+plan_details : その企画の詳細な情報を教えてください。
 characters_inad : その企画に登場する人物を教えてください。
 scene_description_1 : その企画を実際に動画にする場合、最初のシーンを教えてください。
 scene_description_2 ~ scene_description_6 : 2シーン目以降の詳細を教えてください。最大6シーン定義できますがそれより少ないシーン数でも構いません。
 scene_prompt_1 : scene_description_1で定義したシーンをDALLE-3で生成するにはどのようなプロンプトを与えますか？入力するプロンプトを"英語で"教えてください。
 scene_prompt_2 ~ scene_prompt_6 : 2シーン目以降のプロンプトも"英語で"教えてください。
-
-補足情報
-Azure AI Searchを利用して他社の企画や、自社の過去の企画、自社の違う製品の企画を参考に出来ます。
-"ただし企業で同じ企画をやることは禁止です。"
-Azure AI Searchを使って情報が出てこない場合も企画は考えてください。
 """
 
 q_example = """advertiser_name : septeni     
@@ -93,7 +96,8 @@ def chat():
                                         messages=few_shot_messages + [
                                             {"role": "system", "content": systemprompt},
                                             {"role": "user", "content": user_message}] + result,
-                                        temperature=1.0,
+                                        temperature=0.7,
+                                        top_p=0.0,
                                         max_tokens=2048)
     chat_response = response.choices[0].message.content
 
